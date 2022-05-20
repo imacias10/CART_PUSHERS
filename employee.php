@@ -8,7 +8,12 @@
 <body>
   <h1>Cart_Pushers - Employee</h1>
 
-  <a href="/~ewarren/stats.php">Stats</a>
+  <a href="/~imacias/form.php">Log out</a>
+  <a href="/~ewarren/employee.php">Employee List</a>
+  <a href="/~ewarren/add_employee.php">Add Employee</a>
+  <a href="/~ewarren/stats.php">Statistics</a>
+  <a href="/~ewarren/inventory.php">Inventory</a>
+  <a href="/~ewarren/product.php">Product</a>
 
   <?php
 
@@ -47,7 +52,7 @@
         $store_count = 0;
         while($store_q->fetch()) {
           if($store_count == 0) {
-            //echo '<h5>Stores:</h5>';
+            echo '<h3>Stores:</h3>';
             echo '<table>';
             echo '<tr><th>Store ID</th><th>Store Name</th><th>Store Address</th></tr>';
           }
@@ -111,7 +116,7 @@
   </form>
 
   <form action="employee.php" method="POST">
-
+    <h3>Remove Employee:</h3>
     <input type="number" name="employee_id">
     <input type="submit" name="SUBMIT" value="REMOVE EMPLOYEE">
 
@@ -122,7 +127,7 @@
       unset($_POST['SUBMIT']);
       $emp_id = $_POST['employee_id'];
       if($emp_id == ''){
-        echo 'Please insert an employee ID to remove.';
+        echo 'Error: Please insert an employee ID to remove.';
       }
       else{
         if ($deletion = $db->prepare("DELETE FROM Employee WHERE EmployeeID=?")){
@@ -132,13 +137,12 @@
               echo '<br>';
             }
             else {
-              echo mysqli_error($db);
+              echo 'Error: ' . mysqli_error($db);
             }
           }
         }
-
       else {
-        echo mysqli_error($db);
+        echo 'Error: ' . mysqli_error($db);
       }
     }
     }
@@ -162,7 +166,7 @@
                 $employee_count = 0;
                 while($employee_q->fetch()) {
                   if($employee_count == 0) {
-                    //echo '<h5>Stores:</h5>';
+                    echo '<h3>Current Employees:</h3>';
                     echo '<table>';
                     echo '<tr><th>Employee ID</th><th>Dpt ID</th><th>Starting Date</th><th>DOB</th><th>Full Time</th><th>Fname</th><th>MI</th><th>Lname</th><th>Phone Number</th><th>Address</th><th>Store ID</th></tr>';
                   }
@@ -198,8 +202,7 @@
                 $employee_count = 0;
                 while($employee_history_q->fetch()) {
                   if($employee_count == 0) {
-                    //echo '<h5>Stores:</h5>';
-                    echo '<br>';
+                    echo '<h3>Former Employees:</h3>';
                     echo '<table>';
                     echo '<tr><th>EmployeeID</th><th>DptID</th><th>Starting Date</th><th>DOB</th><th>FullTime</th><th>Fname</th><th>MI</th><th>Lname</th><th>PhoneNumber</th><th>Address</th><th>StoreID</th></tr>';
                   }
