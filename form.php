@@ -1,4 +1,10 @@
 <?php
+// Name:    Ivan Macias
+// course:  CMPS 3420
+// @source: form.php
+// This file will allow users (employees and customers) to log into an account with the option to create one.
+
+
 date_default_timezone_set('America/Los_Angeles');
 error_reporting(E_ALL);
 ini_set("log_errors", 1);
@@ -19,6 +25,42 @@ function get_connection() {
     return $connection;
 }
 ?>
+<?php
+if (isset($_POST['SUBMIT'])) {
+	//header('Content-type: application/json');
+	unset($_POST['SUBMIT']);
+	
+	$db = get_connection();	
+
+	$uname = $_POST['USERNAME'];
+	$pword = $_POST['PASSWORD'];
+
+	if (strlen($uname) == 0 || strlen($pword) == 0) {
+		echo "Fields cannot be empty!";
+		//header("Location: form.php");
+		die();
+	}
+
+	$validation = $db->prepare("SELECT username, password, EmployeeID FROM UserAccounts WHERE username = ?");
+	$validation->bind_param('s', $uname);
+	$validation->execute();
+	
+	mysqli_stmt_bind_result($validation, $res_user, $res_password, $id);	
+
+	if ($validation->fetch() && password_verify($pword, $res_password)) {
+		if ($id != NULL) {
+			//header("Location: https://artemis.cs.csub.edu/~ewarren/employee.php"); 
+			header("Location: employee.php");
+		} else {
+			header("Location: https://artemis.cs.csub.edu/~jpereyra/customer.php");	
+		}
+	} 
+	else {
+		echo "<h3 style=\"text-align:center;\">INCORRECT USERNAME/PASSWORD!</h3>";
+	}
+}
+?>
+
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -138,14 +180,7 @@ function get_connection() {
                     <div class="img-container">
                         <img src="food.png" alt="Picture of Food" class="food">
                     </div>
-                    <!--<div class="drop-container">
-                        <label class="choice"for="status">CHOOSE ONE</label>
-                        <select name="user_status">
-                            <option class="option" value="EMPLOYEE">EMPLOYEE</option>
-                            <option class="option" value="CUSTOMER">CUSTOMER</option>
-                        </select>
-                    </div>-->
-                    
+		    
                     <div class="form-container">
                         USERNAME:
                         <input type="text" placeholder="Enter Username" name="USERNAME">
@@ -155,42 +190,6 @@ function get_connection() {
 
 			<button type="submit" name="SUBMIT" class="login-btn">LOGIN</button>
                     </div>
-<?php
-if (isset($_POST['SUBMIT'])) {
-	//header('Content-type: application/json');
-	unset($_POST['SUBMIT']);
-	
-	$db = get_connection();	
-
-	$uname = $_POST['USERNAME'];
-	$pword = $_POST['PASSWORD'];
-
-	if (strlen($uname) == 0 || strlen($pword) == 0) {
-		echo "Fields cannot be empty!";
-		//header("Location: form.php");
-		die();
-	}
-
-	$validation = $db->prepare("SELECT username, password, EmployeeID FROM UserAccounts WHERE username = ?");
-	$validation->bind_param('s', $uname);
-	$validation->execute();
-	
-	mysqli_stmt_bind_result($validation, $res_user, $res_password, $id);	
-
-	if ($validation->fetch() && password_verify($pword, $res_password)) {
-		if ($id != NULL) {
-			header("Location: employee.php");
-			echo "<h3 style=\"text-align:center;\">YOU ARE NOW LOGGED IN</h3>";
-		} else {
-			header("Location: customer.php");
-			echo "LOGGED IN AS A CUSTOMER!";
-		}
-	} 
-	else {
-		echo "<h3 style=\"text-align:center;\">INCORRECT USERNAME/PASSWORD!</h3>";
-	}
-}
-?>
                     <div class="create-container">
                         <a href="create.php" id="create-link">Create Account</a>
                     </div>

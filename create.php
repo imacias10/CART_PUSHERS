@@ -1,4 +1,12 @@
 <?php
+// Name:    Ivan Macias
+// course:  CMPS 3420
+// @source: create.php
+//
+// This file will allow users to create an account for the cart_pushers database.
+// If the user is an employee, then they must enter an EmployeeID.
+// Else, that field will be NULL and the user will be recognized as a customer.
+
 date_default_timezone_set('America/Los_Angeles');
 error_reporting(E_ALL);
 ini_set("log_errors", 1);
@@ -8,8 +16,6 @@ function get_connection() {
     static $connection;
 
     if (!isset($connection)) {
-        // Connect to the cmps3420 database using username demo3420, password 3420.
-        //$connection = mysqli_connect('localhost', 'hellodbuser', 'hellodbpassword','hellodb')
         $connection = mysqli_connect('localhost', 'cart_pushers', 'srehsup_trac3420S22','cart_pushers')
             or die(mysqli_connect_error());
     }
