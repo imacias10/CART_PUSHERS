@@ -28,6 +28,47 @@ function get_connection() {
 }
 
 ?>
+<?php
+            if (isset($_POST['SUBMIT'])) {
+                unset($_POST['SUBMIT']);
+                
+                $db = get_connection();
+                
+                $uname = $_POST['username'];
+                $pword = $_POST['password'];
+                $name1 = $_POST['first_name'];
+                $name2 = $_POST['last_name'];
+                $phone = $_POST['phone_number'];
+		$id    = $_POST['employee_id'];
+
+                if (strlen($uname) == 0 || strlen($pword) == 0 || strlen($name1) == 0
+                    || strlen($name2) == 0 || strlen($phone) == 0) {
+                        echo "Cannot leave these fields empty!!!";
+                        header("Location: create.php");
+		}
+
+		if ($uname == $pword) {
+			echo "<h3 style=\"color: red; text-align: center;\">PASSWORD AND USERNAME CANNOT BE THE SAME!</h3>";
+		}
+		else {	
+			if (strlen($id) == 0) {
+				$id = NULL;
+			}
+
+			$hash = password_hash($pword, PASSWORD_DEFAULT);	
+			$query = $db->prepare("INSERT INTO UserAccounts VALUES (?, ?, ?, ?, ?, ?)");
+			$query->bind_param("ssssii", $uname, $hash, $name1, $name2, $phone, $id);
+		
+			if (!$query->execute()) {
+				echo mysqli_error($db);
+			} else {
+				header("Location: form.php");
+			}
+
+		}
+
+            }
+?>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -170,44 +211,7 @@ function get_connection() {
 	    
 	    <input type="submit" name="SUBMIT" class="submit-btn" value="CREATE ACCOUNT">
 
-            <?php
-            if (isset($_POST['SUBMIT'])) {
-                unset($_POST['SUBMIT']);
-                
-                $db = get_connection();
-                
-                $uname = $_POST['username'];
-                $pword = $_POST['password'];
-                $name1 = $_POST['first_name'];
-                $name2 = $_POST['last_name'];
-                $phone = $_POST['phone_number'];
-		$id    = $_POST['employee_id'];
 
-                if (strlen($uname) == 0 || strlen($pword) == 0 || strlen($name1) == 0
-                    || strlen($name2) == 0 || strlen($phone) == 0) {
-                        echo "Cannot leave these fields empty!!!";
-                        header("Location: create.php");
-		}
-
-		if ($uname == $pword) {
-			echo "<h3 style=\"color: red; text-align: center;\">PASSWORD AND USERNAME CANNOT BE THE SAME!</h3>";
-		}
-		else {	
-			if (strlen($id) == 0) {
-				$id = NULL;
-			}
-
-			$hash = password_hash($pword, PASSWORD_DEFAULT);	
-			$query = $db->prepare("INSERT INTO UserAccounts VALUES (?, ?, ?, ?, ?, ?)");
-			$query->bind_param("ssssii", $uname, $hash, $name1, $name2, $phone, $id);
-		
-			if (!$query->execute()) {
-				echo mysqli_error($db);
-			}
-		}
-
-            }
-            ?>
         </form>
     </div>
 </body>
